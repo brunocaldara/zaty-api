@@ -18,3 +18,7 @@
 ### Configurar o ambiente:
 
 - Copiar o arquivo .env.example para .env e preencher os valores
+
+### Executar a API:
+
+- fastapi dev main.py
