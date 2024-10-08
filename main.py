@@ -3,26 +3,26 @@
 
 import os
 
-import http3
+import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
 load_dotenv()
 
 
-def create_async_client():
-    client = http3.AsyncClient()
-    return client
-
-
-client = create_async_client()
+client = httpx.AsyncClient()
 
 
 async def call_api(url: str):
     api_key = os.getenv("EVO_AUTH_TOKEN")
-    headers = {"apikey": api_key}
-    r = await client.get(url, headers=headers)
-    return r.json
+    headers = {
+        "apikey": api_key,
+        "content-type": "application/json"
+    }
+    params = {"getParticipants": "false"}
+    r = await client.get(url, headers=headers, params=params)
+    print(r.url)
+    return r.text
 
 app = FastAPI()
 
@@ -36,7 +36,7 @@ async def index():
 async def fetch_all_groups():
     evo_base_url = os.getenv("EVO_BASE_URL")
     evo_instance_name = os.getenv("EVO_INSTANCE_NAME")
-    url = f"https://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}"
+    url = f"http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}"
     text = await call_api(url)
     return text
 

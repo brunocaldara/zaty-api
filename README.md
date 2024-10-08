@@ -8,7 +8,7 @@
 
 ### Ativar o ambiente virtual:
 
-- source .venv/bin/activate (linux/mac)
+- source venv/bin/activate (linux/mac)
 - .\env\Scripts\activate.bat (windows)
 
 ### Instalar as dependências:
