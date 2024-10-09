@@ -1,16 +1,14 @@
 # gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker
 # https://stackoverflow.com/questions/63483246/how-to-call-an-api-from-another-api-in-fastapi
+# https://stackoverflow.com/questions/63872924/how-can-i-send-an-http-request-from-my-fastapi-app-to-another-site-api
 
 import os
 
-import httpx
+import aiohttp
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 
 load_dotenv()
-
-
-client = httpx.AsyncClient()
 
 
 async def call_api(url: str):
@@ -20,9 +18,9 @@ async def call_api(url: str):
         "content-type": "application/json"
     }
     params = {"getParticipants": "false"}
-    r = await client.get(url, headers=headers, params=params)
-    print(r.url)
-    return r.text
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=url, headers=headers, params=params) as response:
+            return await response.json()
 
 app = FastAPI()
 
@@ -39,6 +37,23 @@ async def fetch_all_groups():
     url = f"http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}"
     text = await call_api(url)
     return text
+
+
+@app.post("/grupos")
+async def fetch_all_groups(evo_api_key=Body(""),
+                           evo_base_url=Body(""),
+                           evo_instance_name=Body("")):
+    headers = {
+        "apikey": evo_api_key,
+        "content-type": "application/json"
+    }
+    params = {"getParticipants": "false"}
+
+    url = f"http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}"
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=url, headers=headers, params=params) as response:
+            return await response.json()
 
 
 if __name__ == '__main__':
