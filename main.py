@@ -12,12 +12,12 @@ load_dotenv()
 
 
 async def call_api(url: str):
-    api_key = os.getenv("EVO_AUTH_TOKEN")
+    api_key = os.getenv('EVO_AUTH_TOKEN')
     headers = {
-        "apikey": api_key,
-        "content-type": "application/json"
+        'apikey': api_key,
+        'content-type': 'application/json'
     }
-    params = {"getParticipants": "false"}
+    params = {'getParticipants': 'false'}
     async with aiohttp.ClientSession() as session:
         async with session.get(url=url, headers=headers, params=params) as response:
             return await response.json()
@@ -25,31 +25,31 @@ async def call_api(url: str):
 app = FastAPI()
 
 
-@app.get("/")
+@app.get('/')
 async def index():
-    return {"msg": "Funcionou!"}
+    return {'msg': 'Funcionou!'}
 
 
-@app.get("/grupos")
+@app.get('/grupos')
 async def fetch_all_groups():
-    evo_base_url = os.getenv("EVO_BASE_URL")
-    evo_instance_name = os.getenv("EVO_INSTANCE_NAME")
-    url = f"http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}"
+    evo_base_url = os.getenv('EVO_BASE_URL')
+    evo_instance_name = os.getenv('EVO_INSTANCE_NAME')
+    url = f'http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}'
     text = await call_api(url)
     return text
 
 
-@app.post("/grupos")
-async def fetch_all_groups(evo_api_key=Body(""),
-                           evo_base_url=Body(""),
-                           evo_instance_name=Body("")):
+@app.post('/grupos')
+async def fetch_all_groups(evo_api_key=Body(''),
+                           evo_base_url=Body(''),
+                           evo_instance_name=Body('')):
     headers = {
-        "apikey": evo_api_key,
-        "content-type": "application/json"
+        'apikey': evo_api_key,
+        'content-type': 'application/json'
     }
-    params = {"getParticipants": "false"}
+    params = {'getParticipants': 'false'}
 
-    url = f"http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}"
+    url = f'http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url=url, headers=headers, params=params) as response:
@@ -59,5 +59,5 @@ async def fetch_all_groups(evo_api_key=Body(""),
 if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000,
-                log_level="info", reload=True, workers=1)
+    uvicorn.run('main:app', host='0.0.0.0', port=8000,
+                log_level='info', reload=True, workers=1)
