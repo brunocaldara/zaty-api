@@ -8,6 +8,9 @@ import aiohttp
 from dotenv import load_dotenv
 from fastapi import Body, FastAPI
 
+from core.settings import settings
+from routes import tipo_solicitacao_router
+
 load_dotenv()
 
 
@@ -22,7 +25,12 @@ async def call_api(url: str):
         async with session.get(url=url, headers=headers, params=params) as response:
             return await response.json()
 
-app = FastAPI()
+app = FastAPI(title='Zaty API',
+              version=settings.API_VERSION,
+              description='API destinada ao projeto Zaty',
+              )
+
+app.include_router(tipo_solicitacao_router.router, tags=['Tipo Integração'])
 
 
 @app.get('/')
