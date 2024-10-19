@@ -1,11 +1,12 @@
 from typing import Optional
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import field_validator
+from pydantic import ValidationInfo, field_validator
 
 
-class TipoSolicitacaoSchema(PydanticBaseModel):
+class TipoIntegracaoSchema(PydanticBaseModel):
     id: Optional[int] = None
+    logo: Optional[str] = None
     nome: str
 
     @field_validator('nome')

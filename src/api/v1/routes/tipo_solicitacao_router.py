@@ -12,38 +12,39 @@ router = APIRouter()
 
 
 @router.get(path='/',
-            description='',
-            summary='',
+            description='Endpoint para recuperar todos os registros',
+            summary=' ',
             response_model=List[TipoSolicitacaoSchema])
 async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoSolicitacaoModel)
         result = await db.execute(query)
-        tiposIntegracao: List[TipoSolicitacaoModel] = result.scalars().all()
-        return tiposIntegracao
+        tiposSolicitacao: List[TipoSolicitacaoModel] = result.scalars().all()
+        return tiposSolicitacao
 
 
 @router.get(path='/{id}',
-            description='',
-            summary='',
+            description='Endpoint para recuperar registro pelo ID',
+            summary=' ',
             response_model=TipoSolicitacaoSchema)
 async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)
         result = await db.execute(query)
-        tipoIntegracao: List[TipoSolicitacaoModel] = result.scalar_one_or_none()
+        tipoSolicitacao: List[TipoSolicitacaoModel] = result.scalar_one_or_none(
+        )
 
-        if tipoIntegracao == None:
+        if tipoSolicitacao == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail='Tipo de solicitação não encontrado.')
 
-        return tipoIntegracao
+        return tipoSolicitacao
 
 
 @router.post(path='/',
-             description='',
-             summary='',
+             description='Endpoint para salvar novo registro',
+             summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=TipoSolicitacaoSchema)
 async def post_tipo_solicitacao(tipoSolicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
@@ -56,8 +57,8 @@ async def post_tipo_solicitacao(tipoSolicitacao: TipoSolicitacaoSchema, session:
 
 
 @router.put(path='/{id}',
-            description='',
-            summary='',
+            description='Endpoint para atualizar registro pelo ID',
+            summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=TipoSolicitacaoSchema)
 async def put_tipo_solicitacao(id: int, tipoSolicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
@@ -77,8 +78,8 @@ async def put_tipo_solicitacao(id: int, tipoSolicitacao: TipoSolicitacaoSchema, 
 
 
 @router.delete(path='/{id}',
-               description='',
-               summary='',
+               description='Endpoint para excluir registro pelo ID',
+               summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:

@@ -35,33 +35,33 @@ app.include_router(api_routes.router, prefix=settings.API_URL_VERISON)
 
 @app.get('/')
 async def index():
-    return {'msg': 'Funcionou!'}
+    return {'msg': 'Zaty API funcionando!'}
 
 
-@app.get('/grupos')
-async def fetch_all_groups():
-    evo_base_url = os.getenv('EVO_BASE_URL')
-    evo_instance_name = os.getenv('EVO_INSTANCE_NAME')
-    url = f'http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}'
-    text = await call_api(url)
-    return text
+# @app.get('/grupos')
+# async def fetch_all_groups():
+#     evo_base_url = os.getenv('EVO_BASE_URL')
+#     evo_instance_name = os.getenv('EVO_INSTANCE_NAME')
+#     url = f'http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}'
+#     text = await call_api(url)
+#     return text
 
 
-@app.post('/grupos')
-async def fetch_all_groups(evo_api_key=Body(''),
-                           evo_base_url=Body(''),
-                           evo_instance_name=Body('')):
-    headers = {
-        'apikey': evo_api_key,
-        'content-type': 'application/json'
-    }
-    params = {'getParticipants': 'false'}
+# @app.post('/grupos')
+# async def fetch_all_groups(evo_api_key=Body(''),
+#                            evo_base_url=Body(''),
+#                            evo_instance_name=Body('')):
+#     headers = {
+#         'apikey': evo_api_key,
+#         'content-type': 'application/json'
+#     }
+#     params = {'getParticipants': 'false'}
 
-    url = f'http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}'
+#     url = f'http://{evo_base_url}/group/fetchAllGroups/{evo_instance_name}'
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=url, headers=headers, params=params) as response:
-            return await response.json()
+#     async with aiohttp.ClientSession() as session:
+#         async with session.get(url=url, headers=headers, params=params) as response:
+#             return await response.json()
 
 
 if __name__ == '__main__':
