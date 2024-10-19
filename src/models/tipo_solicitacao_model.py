@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from core.settings import settings
+from src.core.settings import settings
 
 
 class TipoSolicitacaoModel(settings.DBBaseModel):

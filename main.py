@@ -8,8 +8,8 @@ import aiohttp
 from dotenv import load_dotenv
 from fastapi import Body, FastAPI
 
-from core.settings import settings
-from routes import tipo_solicitacao_router
+from src.api.v1 import api_routes
+from src.core.settings import settings
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ app = FastAPI(title='Zaty API',
               description='API destinada ao projeto Zaty',
               )
 
-app.include_router(tipo_solicitacao_router.router, tags=['Tipo Integração'])
+app.include_router(api_routes.router, prefix=settings.API_URL_VERISON)
 
 
 @app.get('/')
