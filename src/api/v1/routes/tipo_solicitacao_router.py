@@ -19,8 +19,8 @@ async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoSolicitacaoModel)
         result = await db.execute(query)
-        tiposSolicitacao: List[TipoSolicitacaoModel] = result.scalars().all()
-        return tiposSolicitacao
+        tipos_solicitacao: List[TipoSolicitacaoModel] = result.scalars().all()
+        return tipos_solicitacao
 
 
 @router.get(path='/{id}',
@@ -32,14 +32,14 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)
         result = await db.execute(query)
-        tipoSolicitacao: List[TipoSolicitacaoModel] = result.scalar_one_or_none(
+        tipo_solicitacao: List[TipoSolicitacaoModel] = result.scalar_one_or_none(
         )
 
-        if tipoSolicitacao == None:
+        if tipo_solicitacao == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='Tipo de solicitação não encontrado.')
+                                detail='Tipo de Solicitação não encontrado.')
 
-        return tipoSolicitacao
+        return tipo_solicitacao
 
 
 @router.post(path='/',
@@ -47,13 +47,13 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=TipoSolicitacaoSchema)
-async def post_tipo_solicitacao(tipoSolicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
+async def post_tipo_solicitacao(tipo_solicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
-        tipoSolicitacaoNovo: TipoSolicitacaoModel = TipoSolicitacaoModel()
-        tipoSolicitacaoNovo.nome = tipoSolicitacao.nome
-        db.add(tipoSolicitacaoNovo)
+        tipo_solicitacao_novo: TipoSolicitacaoModel = TipoSolicitacaoModel()
+        tipo_solicitacao_novo.nome = tipo_solicitacao.nome
+        db.add(tipo_solicitacao_novo)
         await db.commit()
-        return tipoSolicitacaoNovo
+        return tipo_solicitacao_novo
 
 
 @router.put(path='/{id}',
@@ -61,20 +61,20 @@ async def post_tipo_solicitacao(tipoSolicitacao: TipoSolicitacaoSchema, session:
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=TipoSolicitacaoSchema)
-async def put_tipo_solicitacao(id: int, tipoSolicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
+async def put_tipo_solicitacao(id: int, tipo_solicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)
         result = await db.execute(query)
-        tipoSolicitacaoUpdate = result.scalar_one_or_none()
+        tipo_solicitacao_update = result.scalar_one_or_none()
 
-        if tipoSolicitacaoUpdate == None:
+        if tipo_solicitacao_update == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='Tipo de solicitação não encontrado.')
+                                detail='Tipo de Solicitação não encontrado.')
         else:
-            tipoSolicitacaoUpdate.nome = tipoSolicitacao.nome
+            tipo_solicitacao_update.nome = tipo_solicitacao.nome
             await db.commit()
-            return tipoSolicitacaoUpdate
+            return tipo_solicitacao_update
 
 
 @router.delete(path='/{id}',
@@ -86,12 +86,12 @@ async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_s
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)
         result = await db.execute(query)
-        tipoSolicitacaoDelete = result.scalar_one_or_none()
+        tipo_solicitacao_delete = result.scalar_one_or_none()
 
-        if tipoSolicitacaoDelete == None:
+        if tipo_solicitacao_delete == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='Tipo de solicitação não encontrado.')
+                                detail='Tipo de Solicitação não encontrado.')
         else:
-            await db.delete(tipoSolicitacaoDelete)
+            await db.delete(tipo_solicitacao_delete)
             await db.commit()
             return Response(status_code=status.HTTP_204_NO_CONTENT)

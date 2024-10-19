@@ -19,8 +19,8 @@ async def get_tipo_integracao(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoIntegracaoModel)
         result = await db.execute(query)
-        tiposIntegracao: List[TipoIntegracaoModel] = result.scalars().all()
-        return tiposIntegracao
+        tipos_integracao: List[TipoIntegracaoModel] = result.scalars().all()
+        return tipos_integracao
 
 
 @router.get(path='/{id}',
@@ -32,13 +32,14 @@ async def get_tipo_integracao_by_id(id: int, session: AsyncSession = Depends(get
         query = select(TipoIntegracaoModel).filter(
             TipoIntegracaoModel.id == id)
         result = await db.execute(query)
-        tipoIntegracao: List[TipoIntegracaoModel] = result.scalar_one_or_none()
+        tipo_integracao: List[TipoIntegracaoModel] = result.scalar_one_or_none(
+        )
 
-        if tipoIntegracao == None:
+        if tipo_integracao == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='Tipo de integração não encontrado.')
+                                detail='Tipo de Integração não encontrado.')
 
-        return tipoIntegracao
+        return tipo_integracao
 
 
 @router.post(path='/',
@@ -46,14 +47,14 @@ async def get_tipo_integracao_by_id(id: int, session: AsyncSession = Depends(get
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=TipoIntegracaoSchema)
-async def post_tipo_integracao(tipoIntegracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
+async def post_tipo_integracao(tipo_integracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
-        tipoIntegracaoNovo: TipoIntegracaoModel = TipoIntegracaoModel()
-        tipoIntegracaoNovo.nome = tipoIntegracao.nome
-        tipoIntegracaoNovo.logo = tipoIntegracao.logo
-        db.add(tipoIntegracaoNovo)
+        tipo_integracao_novo: TipoIntegracaoModel = TipoIntegracaoModel()
+        tipo_integracao_novo.nome = tipo_integracao.nome
+        tipo_integracao_novo.logo = tipo_integracao.logo
+        db.add(tipo_integracao_novo)
         await db.commit()
-        return tipoIntegracaoNovo
+        return tipo_integracao_novo
 
 
 @router.put(path='/{id}',
@@ -61,21 +62,21 @@ async def post_tipo_integracao(tipoIntegracao: TipoIntegracaoSchema, session: As
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=TipoIntegracaoSchema)
-async def put_tipo_integracao(id: int, tipoIntegracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
+async def put_tipo_integracao(id: int, tipo_integracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoIntegracaoModel).filter(
             TipoIntegracaoModel.id == id)
         result = await db.execute(query)
-        tipoIntegracaoUpdate = result.scalar_one_or_none()
+        tipo_integracao_update = result.scalar_one_or_none()
 
-        if tipoIntegracaoUpdate == None:
+        if tipo_integracao_update == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='Tipo de integração não encontrado.')
+                                detail='Tipo de Integração não encontrado.')
         else:
-            tipoIntegracaoUpdate.nome = tipoIntegracao.nome
-            tipoIntegracaoUpdate.logo = tipoIntegracao.logo
+            tipo_integracao_update.nome = tipo_integracao.nome
+            tipo_integracao_update.logo = tipo_integracao.logo
             await db.commit()
-            return tipoIntegracaoUpdate
+            return tipo_integracao_update
 
 
 @router.delete(path='/{id}',
@@ -87,12 +88,12 @@ async def delete_tipo_integracao(id: int, session: AsyncSession = Depends(get_se
         query = select(TipoIntegracaoModel).filter(
             TipoIntegracaoModel.id == id)
         result = await db.execute(query)
-        tipoIntegracaoDelete = result.scalar_one_or_none()
+        tipo_integracao_delete = result.scalar_one_or_none()
 
-        if tipoIntegracaoDelete == None:
+        if tipo_integracao_delete == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail='Tipo de integração não encontrado.')
+                                detail='Tipo de Integração não encontrado.')
         else:
-            await db.delete(tipoIntegracaoDelete)
+            await db.delete(tipo_integracao_delete)
             await db.commit()
             return Response(status_code=status.HTTP_204_NO_CONTENT)
