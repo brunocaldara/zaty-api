@@ -48,11 +48,11 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
              response_model=CanalSchema)
 async def post_tipo_solicitacao(canal: CanalSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
-        canal_novo: CanalModel = CanalModel()
-        canal_novo.nome = canal.nome
-        db.add(canal_novo)
+        canal_insert: CanalModel = CanalModel()
+        canal_insert.nome = canal.nome
+        db.add(canal_insert)
         await db.commit()
-        return canal_novo
+        return canal_insert
 
 
 @router.put(path='/{id}',

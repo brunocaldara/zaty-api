@@ -15,7 +15,7 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[TipoIntegracaoSchema])
-async def get_tipo_integracao(session: AsyncSession = Depends(get_session)):
+async def get_tipos_integracao(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(TipoIntegracaoModel)
         result = await db.execute(query)
@@ -49,12 +49,12 @@ async def get_tipo_integracao_by_id(id: int, session: AsyncSession = Depends(get
              response_model=TipoIntegracaoSchema)
 async def post_tipo_integracao(tipo_integracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
-        tipo_integracao_novo: TipoIntegracaoModel = TipoIntegracaoModel()
-        tipo_integracao_novo.nome = tipo_integracao.nome
-        tipo_integracao_novo.logo = tipo_integracao.logo
-        db.add(tipo_integracao_novo)
+        tipo_integracao_insert: TipoIntegracaoModel = TipoIntegracaoModel()
+        tipo_integracao_insert.nome = tipo_integracao.nome
+        tipo_integracao_insert.logo = tipo_integracao.logo
+        db.add(tipo_integracao_insert)
         await db.commit()
-        return tipo_integracao_novo
+        return tipo_integracao_insert
 
 
 @router.put(path='/{id}',

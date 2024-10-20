@@ -15,7 +15,7 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[NivelUsuarioSchema])
-async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
+async def get_niveis_usuario(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(NivelUsuarioModel)
         result = await db.execute(query)
@@ -27,7 +27,7 @@ async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=NivelUsuarioSchema)
-async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_nivel_usuario_by_id(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(NivelUsuarioModel).filter(
             NivelUsuarioModel.id == id)
@@ -47,13 +47,13 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=NivelUsuarioSchema)
-async def post_tipo_solicitacao(nivelUsuario: NivelUsuarioSchema, session: AsyncSession = Depends(get_session)):
+async def post_nivel_usuario(nivelUsuario: NivelUsuarioSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
-        nivel_usuario_novo: NivelUsuarioModel = NivelUsuarioModel()
-        nivel_usuario_novo.nome = nivelUsuario.nome
-        db.add(nivel_usuario_novo)
+        nivel_usuario_insert: NivelUsuarioModel = NivelUsuarioModel()
+        nivel_usuario_insert.nome = nivelUsuario.nome
+        db.add(nivel_usuario_insert)
         await db.commit()
-        return nivel_usuario_novo
+        return nivel_usuario_insert
 
 
 @router.put(path='/{id}',
@@ -61,7 +61,7 @@ async def post_tipo_solicitacao(nivelUsuario: NivelUsuarioSchema, session: Async
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=NivelUsuarioSchema)
-async def put_tipo_solicitacao(id: int, nivelUsuario: NivelUsuarioSchema, session: AsyncSession = Depends(get_session)):
+async def put_nivel_usuario(id: int, nivelUsuario: NivelUsuarioSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(NivelUsuarioModel).filter(
             NivelUsuarioModel.id == id)
@@ -81,7 +81,7 @@ async def put_tipo_solicitacao(id: int, nivelUsuario: NivelUsuarioSchema, sessio
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_nivel_usuario(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(NivelUsuarioModel).filter(
             NivelUsuarioModel.id == id)

@@ -16,7 +16,7 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[EmpresaSchema])
-async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
+async def get_empresas(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(EmpresaModel)
         result = await db.execute(query)
@@ -28,7 +28,7 @@ async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=EmpresaSchema)
-async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_empresa_by_id(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(EmpresaModel).filter(EmpresaModel.id == id)
         result = await db.execute(query)
@@ -46,7 +46,7 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=EmpresaSchema)
-async def post_tipo_solicitacao(empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
+async def post_empresa(empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         if empresa.usuario_id != None:
             query_usuario = select(UsuarioModel).filter(
@@ -58,17 +58,17 @@ async def post_tipo_solicitacao(empresa: EmpresaSchema, session: AsyncSession = 
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                     detail='Usuário inválido.')
 
-        empresa_nova: EmpresaModel = EmpresaModel()
-        empresa_nova.nome = empresa.nome
-        empresa_nova.cnpj = empresa.cnpj
-        empresa_nova.logo = empresa.logo
-        empresa_nova.url_evo = empresa.url_evo
-        empresa_nova.usuario_id = empresa.usuario_id
-        empresa_nova.status = empresa.status
-        empresa_nova.codigo_publico = empresa.codigo_publico
-        db.add(empresa_nova)
+        empresa_insert: EmpresaModel = EmpresaModel()
+        empresa_insert.nome = empresa.nome
+        empresa_insert.cnpj = empresa.cnpj
+        empresa_insert.logo = empresa.logo
+        empresa_insert.url_evo = empresa.url_evo
+        empresa_insert.usuario_id = empresa.usuario_id
+        empresa_insert.status = empresa.status
+        empresa_insert.codigo_publico = empresa.codigo_publico
+        db.add(empresa_insert)
         await db.commit()
-        return empresa_nova
+        return empresa_insert
 
 
 @router.put(path='/{id}',
@@ -76,7 +76,7 @@ async def post_tipo_solicitacao(empresa: EmpresaSchema, session: AsyncSession = 
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=EmpresaSchema)
-async def put_tipo_solicitacao(id: int, empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
+async def put_empresa(id: int, empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(EmpresaModel).filter(EmpresaModel.id == id)
         result = await db.execute(query)
@@ -101,7 +101,7 @@ async def put_tipo_solicitacao(id: int, empresa: EmpresaSchema, session: AsyncSe
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_empresa(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(EmpresaModel).filter(EmpresaModel.id == id)
         result = await db.execute(query)
