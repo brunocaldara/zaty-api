@@ -1,5 +1,4 @@
 from sqlalchemy import Boolean, Integer, String
-from sqlalchemy.dialects.postgresql import TEXT
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.settings import settings
