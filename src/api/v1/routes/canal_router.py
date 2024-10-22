@@ -15,7 +15,7 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[CanalSchema])
-async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
+async def get_canais(session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(CanalModel)
         result = await db.execute(query)
@@ -27,7 +27,7 @@ async def get_tipo_solicitacao(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=CanalSchema)
-async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_canal_by_id(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)
@@ -46,7 +46,7 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=CanalSchema)
-async def post_tipo_solicitacao(canal: CanalSchema, session: AsyncSession = Depends(get_session)):
+async def post_canal(canal: CanalSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         canal_insert: CanalModel = CanalModel()
         canal_insert.nome = canal.nome
@@ -60,7 +60,7 @@ async def post_tipo_solicitacao(canal: CanalSchema, session: AsyncSession = Depe
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=CanalSchema)
-async def put_tipo_solicitacao(id: int, canal: CanalSchema, session: AsyncSession = Depends(get_session)):
+async def put_canal(id: int, canal: CanalSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)
@@ -79,7 +79,7 @@ async def put_tipo_solicitacao(id: int, canal: CanalSchema, session: AsyncSessio
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_canal(id: int, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)

@@ -12,6 +12,18 @@ from src.schemas.empresa_schema import EmpresaSchema
 router = APIRouter()
 
 
+async def validade_foreign_keys(empresa: EmpresaSchema, db: AsyncSession):
+    if empresa.usuario_id != None:
+        query_usuario = select(UsuarioModel).filter(
+            UsuarioModel.id == empresa.usuario_id)
+        result_usuario = await db.execute(query_usuario)
+        usuario = result_usuario.scalar_one_or_none()
+
+        if usuario == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail='Usuário inválido.')
+
+
 @router.get(path='/',
             description='Endpoint para recuperar todos os registros',
             summary=' ',
@@ -48,15 +60,7 @@ async def get_empresa_by_id(id: int, session: AsyncSession = Depends(get_session
              response_model=EmpresaSchema)
 async def post_empresa(empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
     async with session as db:
-        if empresa.usuario_id != None:
-            query_usuario = select(UsuarioModel).filter(
-                UsuarioModel.id == empresa.usuario_id)
-            usuario_result = await db.execute(query_usuario)
-            usuario = usuario_result.scalar_one_or_none()
-
-            if usuario == None:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail='Usuário inválido.')
+        await validade_foreign_keys(empresa, db)
 
         empresa_insert: EmpresaModel = EmpresaModel()
         empresa_insert.nome = empresa.nome
@@ -86,6 +90,8 @@ async def put_empresa(id: int, empresa: EmpresaSchema, session: AsyncSession = D
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail='Empresa não encontrada.')
         else:
+            await validade_foreign_keys(empresa, db)
+
             empresa_update.nome = empresa.nome
             empresa_update.cnpj = empresa.cnpj
             empresa_update.logo = empresa.logo
@@ -93,8 +99,8 @@ async def put_empresa(id: int, empresa: EmpresaSchema, session: AsyncSession = D
             empresa_update.usuario_id = empresa.usuario_id
             empresa_update.status = empresa.status
             empresa_update.codigo_publico = empresa.codigo_publico
-        await db.commit()
-        return empresa_update
+            await db.commit()
+            return empresa_update
 
 
 @router.delete(path='/{id}',
