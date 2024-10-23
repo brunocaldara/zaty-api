@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import field_validator
+from pydantic import HttpUrl, field_validator
 
 
 class EmpresaSchema(PydanticBaseModel):
@@ -9,7 +9,7 @@ class EmpresaSchema(PydanticBaseModel):
     nome: str
     cnpj: str
     logo: Optional[str] = None
-    url_evo: Optional[str] = None
+    url_evo: Optional[HttpUrl] = None
     usuario_id: Optional[int] = None
     status: Optional[str] = None
     codigo_publico: Optional[str] = None

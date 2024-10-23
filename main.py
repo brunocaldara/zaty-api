@@ -37,7 +37,6 @@ app.include_router(api_routes.router, prefix=settings.API_URL_VERISON)
 async def index():
     return {'msg': 'Zaty API funcionando!'}
 
-
 # @app.get('/grupos')
 # async def fetch_all_groups():
 #     evo_base_url = os.getenv('EVO_BASE_URL')

@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel as PydanticBaseModel
+from pydantic import HttpUrl
 
 
 class SolicitacaoSchema(PydanticBaseModel):
@@ -11,7 +12,7 @@ class SolicitacaoSchema(PydanticBaseModel):
     whatsapp: Optional[str] = None
     codigo_publico: Optional[str] = None
     validade: Optional[datetime]
-    url: Optional[str] = None
+    url: Optional[HttpUrl] = None
     status: Optional[str] = None
     tipo_solicitacao_id: Optional[int] = None
     usuario_id: Optional[int] = None
