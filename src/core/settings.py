@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     '''
     openssl rand -hex 32
     '''
-    JWT_SECRET: str = '60fb77f73db2a2cd5e50dfddcf2d8f5b1dd9a1ebf7f307442d24871b988053e6'
+    JWT_SECRET: Optional[str] = os.getenv('JWT_SECRET')
     JWT_ALGORITHM: str = 'HS256'
     # 60 minutos * 24 horas * 7 dias => 1 semana
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7
