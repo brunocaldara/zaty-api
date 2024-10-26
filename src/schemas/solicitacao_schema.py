@@ -2,13 +2,13 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import HttpUrl
+from pydantic import EmailStr, HttpUrl
 
 
 class SolicitacaoSchema(PydanticBaseModel):
     id: Optional[int] = None
     nome: Optional[str] = None
-    email: Optional[str] = None
+    email: Optional[EmailStr] = None
     whatsapp: Optional[str] = None
     codigo_publico: Optional[str] = None
     validade: Optional[datetime]

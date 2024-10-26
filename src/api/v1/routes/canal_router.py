@@ -31,8 +31,7 @@ async def get_canal_by_id(id: int, session: AsyncSession = Depends(get_session))
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)
-        canal: List[CanalModel] = result.scalar_one_or_none(
-        )
+        canal: List[CanalModel] = result.scalar_one_or_none()
 
         if canal == None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,

@@ -9,13 +9,13 @@ from pytz import timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from core.database import get_session
+from src.core.database import get_session
 from src.core.security import verify_password
 from src.core.settings import settings
 from src.models.usuario_model import UsuarioModel
 
 oauth2_schema = OAuth2PasswordBearer(
-    tokenUrl=f'{settings.API_URL_VERISON}/auth/login'
+    tokenUrl=f'{settings.API_URL_VERISON}/auth/token'
 )
 
 
@@ -32,7 +32,7 @@ async def autenticate_user(email: EmailStr, password: str, session: AsyncSession
     async with session as db:
         query = select(UsuarioModel).filter(UsuarioModel.email == email)
         result = await db.execute(query)
-        usuario: UsuarioModel = result.scalars().unique().one_or_none
+        usuario: UsuarioModel = result.scalar_one_or_none()
 
         if not usuario:
             return None

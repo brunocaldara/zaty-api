@@ -1,15 +1,14 @@
 from typing import Optional
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import field_validator
+from pydantic import EmailStr, field_validator
 
 
 class UsuarioSchema(PydanticBaseModel):
     id: Optional[int] = None
     nome: str
     cpf: str
-    email: str
-    senha: str
+    email: EmailStr
     status: Optional[str] = None
     whatsapp: Optional[str] = None
     wizard: Optional[bool] = None
@@ -37,6 +36,10 @@ class UsuarioSchema(PydanticBaseModel):
             raise ValueError('Campo E-mail é obrigatório.')
 
         return value
+
+
+class UsuarioSchemaCreate(UsuarioSchema):
+    senha: str
 
     @field_validator('senha')
     def senha_validator(cls, value: str):

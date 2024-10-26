@@ -2,7 +2,8 @@ from fastapi import APIRouter
 
 from src.api.v1.routes import (atendimento_router, canal_router,
                                empresa_router, nivel_usuario_router,
-                               tipo_integracao_router, tipo_solicitacao_router)
+                               tipo_integracao_router, tipo_solicitacao_router,
+                               usuario_router)
 
 router = APIRouter()
 
@@ -18,3 +19,5 @@ router.include_router(tipo_integracao_router.router,
                       prefix='/tipointegracao', tags=['Tipo Integração'])
 router.include_router(tipo_solicitacao_router.router,
                       prefix='/tiposolicitacao', tags=['Tipo Solicitação'])
+router.include_router(usuario_router.router,
+                      prefix='/usuario', tags=['Usuário'])
