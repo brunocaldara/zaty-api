@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from src.core.database import get_session
-from src.models.canal_model import CanalModel
-from src.schemas.canal_schema import CanalSchema
+from src.models import CanalModel
+from src.schemas import CanalSchema
 
 router = APIRouter()
 

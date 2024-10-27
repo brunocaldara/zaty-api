@@ -5,13 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from src.core.database import get_session
-from src.models.atendimento_schema import AtendimentoModel
-from src.models.canal_model import CanalModel
-from src.models.conexao_model import ConexaoModel
-from src.models.empresa_model import EmpresaModel
-from src.models.setor_model import SetorModel
-from src.models.usuario_model import UsuarioModel
-from src.schemas.atendimento_schema import AtendimentoSchema
+from src.models import (AtendimentoModel, CanalModel, ConexaoModel,
+                        EmpresaModel, SetorModel, UsuarioModel)
+from src.schemas import AtendimentoSchema, AtendimentoSchemaBase
 
 router = APIRouter()
 
@@ -102,7 +98,7 @@ async def get_atendimento_by_id(id: int, session: AsyncSession = Depends(get_ses
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=AtendimentoSchema)
-async def post_atendimento(atendimento: AtendimentoSchema, session: AsyncSession = Depends(get_session)):
+async def post_atendimento(atendimento: AtendimentoSchemaBase, session: AsyncSession = Depends(get_session)):
     async with session as db:
         await validade_foreign_keys(atendimento, db)
 
@@ -135,7 +131,7 @@ async def post_atendimento(atendimento: AtendimentoSchema, session: AsyncSession
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=AtendimentoSchema)
-async def put_atendimento(id: int, atendimento: AtendimentoSchema, session: AsyncSession = Depends(get_session)):
+async def put_atendimento(id: int, atendimento: AtendimentoSchemaBase, session: AsyncSession = Depends(get_session)):
     async with session as db:
         query = select(AtendimentoModel).filter(AtendimentoModel.id == id)
         result = await db.execute(query)

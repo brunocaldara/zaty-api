@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from src.core.database import get_session
-from src.models.nivel_usuario_model import NivelUsuarioModel
-from src.schemas.nivel_usuario_schema import NivelUsuarioSchema
+from src.models import NivelUsuarioModel
+from src.schemas import NivelUsuarioSchema
 
 router = APIRouter()
 

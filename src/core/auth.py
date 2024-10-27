@@ -12,20 +12,11 @@ from sqlalchemy.future import select
 from src.core.database import get_session
 from src.core.security import verify_password
 from src.core.settings import settings
-from src.models.usuario_model import UsuarioModel
+from src.models import UsuarioModel
 
 oauth2_schema = OAuth2PasswordBearer(
-    tokenUrl=f'{settings.API_URL_VERISON}/auth/token'
+    tokenUrl=f'{settings.API_URL_VERISON}/usuario/login'
 )
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: str | None = None
 
 
 async def autenticate_user(email: EmailStr, password: str, session: AsyncSession) -> Optional[UsuarioModel]:
@@ -50,7 +41,7 @@ def create_jwt_token(sub: str) -> str:
     payload['type'] = 'access_token'
     payload['exp'] = expires
     payload['iat'] = datetime_now
-    payload['sub'] = sub
+    payload['sub'] = str(sub)
 
     return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
@@ -65,22 +56,24 @@ async def get_current_user(
         headers={'WWW-Authenticate': 'Bearer'},
     )
 
+    username = None
+
     try:
         payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[
                              settings.JWT_ALGORITHM], options={'verify_aud': False})
-        username: str = payload.get('sub')
-        if username is None:
+        username_sub: str = payload.get('sub')
+        if username_sub is None:
             raise credentials_exception
 
-        token_data: TokenData = TokenData(username)
+        username = username_sub
     except JWTError:
         raise credentials_exception
 
     async with session as db:
         query = select(UsuarioModel).filter(
-            UsuarioModel.id == int(token_data.username))
+            UsuarioModel.id == int(username))
         result = await db.execute(query)
-        usuario: UsuarioModel = result.scalars().unique().one_or_none()
+        usuario: UsuarioModel = result.scalar_one_or_none()
 
         if not usuario:
             raise credentials_exception
