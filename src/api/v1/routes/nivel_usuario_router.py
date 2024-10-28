@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.core.auth import get_current_user
 from src.core.database import get_session
-from src.models import NivelUsuarioModel
+from src.models import NivelUsuarioModel, UsuarioModel
 from src.schemas import NivelUsuarioSchema
 
 router = APIRouter()
@@ -15,7 +16,8 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[NivelUsuarioSchema])
-async def get_niveis_usuario(session: AsyncSession = Depends(get_session)):
+async def get_niveis_usuario(session: AsyncSession = Depends(get_session),
+                             usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(NivelUsuarioModel)
         result = await db.execute(query)
@@ -27,7 +29,8 @@ async def get_niveis_usuario(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=NivelUsuarioSchema)
-async def get_nivel_usuario_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_nivel_usuario_by_id(id: int, session: AsyncSession = Depends(get_session),
+                                  usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(NivelUsuarioModel).filter(
             NivelUsuarioModel.id == id)
@@ -47,7 +50,9 @@ async def get_nivel_usuario_by_id(id: int, session: AsyncSession = Depends(get_s
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=NivelUsuarioSchema)
-async def post_nivel_usuario(nivelUsuario: NivelUsuarioSchema, session: AsyncSession = Depends(get_session)):
+async def post_nivel_usuario(nivelUsuario: NivelUsuarioSchema,
+                             session: AsyncSession = Depends(get_session),
+                             usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         nivel_usuario_insert: NivelUsuarioModel = NivelUsuarioModel()
         nivel_usuario_insert.nome = nivelUsuario.nome
@@ -61,7 +66,9 @@ async def post_nivel_usuario(nivelUsuario: NivelUsuarioSchema, session: AsyncSes
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=NivelUsuarioSchema)
-async def put_nivel_usuario(id: int, nivelUsuario: NivelUsuarioSchema, session: AsyncSession = Depends(get_session)):
+async def put_nivel_usuario(id: int, nivelUsuario: NivelUsuarioSchema,
+                            session: AsyncSession = Depends(get_session),
+                            usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(NivelUsuarioModel).filter(
             NivelUsuarioModel.id == id)
@@ -81,7 +88,8 @@ async def put_nivel_usuario(id: int, nivelUsuario: NivelUsuarioSchema, session: 
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_nivel_usuario(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_nivel_usuario(id: int, session: AsyncSession = Depends(get_session),
+                               usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(NivelUsuarioModel).filter(
             NivelUsuarioModel.id == id)

@@ -11,7 +11,8 @@ from src.core.database import get_session
 from src.core.security import generate_password_hash, verify_password
 from src.models import EmpresaModel, UsuarioModel
 from src.schemas import (NivelUsuarioSchema, SetorSchema, UsuarioSchema,
-                         UsuarioSchemaChangePassword, UsuarioSchemaCreate)
+                         UsuarioSchemaBase, UsuarioSchemaChangePassword,
+                         UsuarioSchemaCreate)
 
 router = APIRouter()
 
@@ -128,7 +129,7 @@ async def post_usuario(usuario: UsuarioSchemaCreate,
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=UsuarioSchema)
-async def put_usuario(id: int, usuario: UsuarioSchema,
+async def put_usuario(id: int, usuario: UsuarioSchemaBase,
                       session: AsyncSession = Depends(get_session),
                       usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:

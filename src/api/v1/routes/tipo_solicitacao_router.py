@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.core.auth import get_current_user
 from src.core.database import get_session
-from src.models import TipoSolicitacaoModel
+from src.models import TipoSolicitacaoModel, UsuarioModel
 from src.schemas import TipoSolicitacaoSchema
 
 router = APIRouter()
@@ -15,7 +16,8 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[TipoSolicitacaoSchema])
-async def get_tipos_solicitacao(session: AsyncSession = Depends(get_session)):
+async def get_tipos_solicitacao(session: AsyncSession = Depends(get_session),
+                                usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoSolicitacaoModel)
         result = await db.execute(query)
@@ -27,7 +29,8 @@ async def get_tipos_solicitacao(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=TipoSolicitacaoSchema)
-async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(get_session),
+                                     usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)
@@ -47,7 +50,9 @@ async def get_tipo_solicitacao_by_id(id: int, session: AsyncSession = Depends(ge
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=TipoSolicitacaoSchema)
-async def post_tipo_solicitacao(tipo_solicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
+async def post_tipo_solicitacao(tipo_solicitacao: TipoSolicitacaoSchema,
+                                session: AsyncSession = Depends(get_session),
+                                usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         tipo_solicitacao_insert: TipoSolicitacaoModel = TipoSolicitacaoModel()
         tipo_solicitacao_insert.nome = tipo_solicitacao.nome
@@ -61,7 +66,9 @@ async def post_tipo_solicitacao(tipo_solicitacao: TipoSolicitacaoSchema, session
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=TipoSolicitacaoSchema)
-async def put_tipo_solicitacao(id: int, tipo_solicitacao: TipoSolicitacaoSchema, session: AsyncSession = Depends(get_session)):
+async def put_tipo_solicitacao(id: int, tipo_solicitacao: TipoSolicitacaoSchema,
+                               session: AsyncSession = Depends(get_session),
+                               usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)
@@ -81,7 +88,8 @@ async def put_tipo_solicitacao(id: int, tipo_solicitacao: TipoSolicitacaoSchema,
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_tipo_solicitacao(id: int, session: AsyncSession = Depends(get_session),
+                                  usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoSolicitacaoModel).filter(
             TipoSolicitacaoModel.id == id)

@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.core.auth import get_current_user
 from src.core.database import get_session
 from src.models import EmpresaModel, UsuarioModel
-from src.schemas import EmpresaSchema
+from src.schemas import EmpresaSchema, EmpresaSchemaBase
 
 router = APIRouter()
 
@@ -27,7 +28,8 @@ async def validade_foreign_keys(empresa: EmpresaSchema, db: AsyncSession):
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[EmpresaSchema])
-async def get_empresas(session: AsyncSession = Depends(get_session)):
+async def get_empresas(session: AsyncSession = Depends(get_session),
+                       usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(EmpresaModel)
         result = await db.execute(query)
@@ -39,7 +41,8 @@ async def get_empresas(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=EmpresaSchema)
-async def get_empresa_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_empresa_by_id(id: int, session: AsyncSession = Depends(get_session),
+                            usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(EmpresaModel).filter(EmpresaModel.id == id)
         result = await db.execute(query)
@@ -57,7 +60,8 @@ async def get_empresa_by_id(id: int, session: AsyncSession = Depends(get_session
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=EmpresaSchema)
-async def post_empresa(empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
+async def post_empresa(empresa: EmpresaSchemaBase, session: AsyncSession = Depends(get_session),
+                       usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         await validade_foreign_keys(empresa, db)
 
@@ -79,7 +83,9 @@ async def post_empresa(empresa: EmpresaSchema, session: AsyncSession = Depends(g
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=EmpresaSchema)
-async def put_empresa(id: int, empresa: EmpresaSchema, session: AsyncSession = Depends(get_session)):
+async def put_empresa(id: int, empresa: EmpresaSchemaBase,
+                      session: AsyncSession = Depends(get_session),
+                      usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(EmpresaModel).filter(EmpresaModel.id == id)
         result = await db.execute(query)
@@ -106,7 +112,8 @@ async def put_empresa(id: int, empresa: EmpresaSchema, session: AsyncSession = D
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_empresa(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_empresa(id: int, session: AsyncSession = Depends(get_session),
+                         usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(EmpresaModel).filter(EmpresaModel.id == id)
         result = await db.execute(query)

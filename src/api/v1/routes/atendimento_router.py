@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.core.auth import get_current_user
 from src.core.database import get_session
 from src.models import (AtendimentoModel, CanalModel, ConexaoModel,
                         EmpresaModel, SetorModel, UsuarioModel)
@@ -68,7 +69,8 @@ async def validade_foreign_keys(atendimento: AtendimentoSchema, db: AsyncSession
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[AtendimentoSchema])
-async def get_atendimentos(session: AsyncSession = Depends(get_session)):
+async def get_atendimentos(session: AsyncSession = Depends(get_session),
+                           usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(AtendimentoModel)
         result = await db.execute(query)
@@ -80,7 +82,8 @@ async def get_atendimentos(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=AtendimentoSchema)
-async def get_atendimento_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_atendimento_by_id(id: int, session: AsyncSession = Depends(get_session),
+                                usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(AtendimentoModel).filter(AtendimentoModel.id == id)
         result = await db.execute(query)
@@ -98,7 +101,9 @@ async def get_atendimento_by_id(id: int, session: AsyncSession = Depends(get_ses
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=AtendimentoSchema)
-async def post_atendimento(atendimento: AtendimentoSchemaBase, session: AsyncSession = Depends(get_session)):
+async def post_atendimento(atendimento: AtendimentoSchemaBase,
+                           session: AsyncSession = Depends(get_session),
+                           usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         await validade_foreign_keys(atendimento, db)
 
@@ -131,7 +136,9 @@ async def post_atendimento(atendimento: AtendimentoSchemaBase, session: AsyncSes
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=AtendimentoSchema)
-async def put_atendimento(id: int, atendimento: AtendimentoSchemaBase, session: AsyncSession = Depends(get_session)):
+async def put_atendimento(id: int, atendimento: AtendimentoSchemaBase,
+                          session: AsyncSession = Depends(get_session),
+                          usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(AtendimentoModel).filter(AtendimentoModel.id == id)
         result = await db.execute(query)
@@ -169,7 +176,8 @@ async def put_atendimento(id: int, atendimento: AtendimentoSchemaBase, session: 
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_atendimento(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_atendimento(id: int, session: AsyncSession = Depends(get_session),
+                             usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(AtendimentoModel).filter(AtendimentoModel.id == id)
         result = await db.execute(query)

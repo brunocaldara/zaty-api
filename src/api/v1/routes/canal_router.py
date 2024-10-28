@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.core.auth import get_current_user
 from src.core.database import get_session
-from src.models import CanalModel
+from src.models import CanalModel, UsuarioModel
 from src.schemas import CanalSchema
 
 router = APIRouter()
@@ -15,7 +16,8 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[CanalSchema])
-async def get_canais(session: AsyncSession = Depends(get_session)):
+async def get_canais(session: AsyncSession = Depends(get_session),
+                     usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(CanalModel)
         result = await db.execute(query)
@@ -27,7 +29,8 @@ async def get_canais(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=CanalSchema)
-async def get_canal_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_canal_by_id(id: int, session: AsyncSession = Depends(get_session),
+                          usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)
@@ -45,7 +48,8 @@ async def get_canal_by_id(id: int, session: AsyncSession = Depends(get_session))
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=CanalSchema)
-async def post_canal(canal: CanalSchema, session: AsyncSession = Depends(get_session)):
+async def post_canal(canal: CanalSchema, session: AsyncSession = Depends(get_session),
+                     usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         canal_insert: CanalModel = CanalModel()
         canal_insert.nome = canal.nome
@@ -59,7 +63,8 @@ async def post_canal(canal: CanalSchema, session: AsyncSession = Depends(get_ses
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=CanalSchema)
-async def put_canal(id: int, canal: CanalSchema, session: AsyncSession = Depends(get_session)):
+async def put_canal(id: int, canal: CanalSchema, session: AsyncSession = Depends(get_session),
+                    usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)
@@ -78,7 +83,8 @@ async def put_canal(id: int, canal: CanalSchema, session: AsyncSession = Depends
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_canal(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_canal(id: int, session: AsyncSession = Depends(get_session),
+                       usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(CanalModel).filter(CanalModel.id == id)
         result = await db.execute(query)

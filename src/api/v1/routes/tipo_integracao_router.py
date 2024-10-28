@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from src.core.auth import get_current_user
 from src.core.database import get_session
-from src.models import TipoIntegracaoModel
+from src.models import TipoIntegracaoModel, UsuarioModel
 from src.schemas import TipoIntegracaoSchema
 
 router = APIRouter()
@@ -15,7 +16,8 @@ router = APIRouter()
             description='Endpoint para recuperar todos os registros',
             summary=' ',
             response_model=List[TipoIntegracaoSchema])
-async def get_tipos_integracao(session: AsyncSession = Depends(get_session)):
+async def get_tipos_integracao(session: AsyncSession = Depends(get_session),
+                               usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoIntegracaoModel)
         result = await db.execute(query)
@@ -27,7 +29,8 @@ async def get_tipos_integracao(session: AsyncSession = Depends(get_session)):
             description='Endpoint para recuperar registro pelo ID',
             summary=' ',
             response_model=TipoIntegracaoSchema)
-async def get_tipo_integracao_by_id(id: int, session: AsyncSession = Depends(get_session)):
+async def get_tipo_integracao_by_id(id: int, session: AsyncSession = Depends(get_session),
+                                    usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoIntegracaoModel).filter(
             TipoIntegracaoModel.id == id)
@@ -47,7 +50,9 @@ async def get_tipo_integracao_by_id(id: int, session: AsyncSession = Depends(get
              summary=' ',
              status_code=status.HTTP_201_CREATED,
              response_model=TipoIntegracaoSchema)
-async def post_tipo_integracao(tipo_integracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
+async def post_tipo_integracao(tipo_integracao: TipoIntegracaoSchema,
+                               session: AsyncSession = Depends(get_session),
+                               usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         tipo_integracao_insert: TipoIntegracaoModel = TipoIntegracaoModel()
         tipo_integracao_insert.nome = tipo_integracao.nome
@@ -62,7 +67,9 @@ async def post_tipo_integracao(tipo_integracao: TipoIntegracaoSchema, session: A
             summary=' ',
             status_code=status.HTTP_202_ACCEPTED,
             response_model=TipoIntegracaoSchema)
-async def put_tipo_integracao(id: int, tipo_integracao: TipoIntegracaoSchema, session: AsyncSession = Depends(get_session)):
+async def put_tipo_integracao(id: int, tipo_integracao: TipoIntegracaoSchema,
+                              session: AsyncSession = Depends(get_session),
+                              usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoIntegracaoModel).filter(
             TipoIntegracaoModel.id == id)
@@ -83,7 +90,8 @@ async def put_tipo_integracao(id: int, tipo_integracao: TipoIntegracaoSchema, se
                description='Endpoint para excluir registro pelo ID',
                summary=' ',
                status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tipo_integracao(id: int, session: AsyncSession = Depends(get_session)):
+async def delete_tipo_integracao(id: int, session: AsyncSession = Depends(get_session),
+                                 usuario_logado: UsuarioModel = Depends(get_current_user)):
     async with session as db:
         query = select(TipoIntegracaoModel).filter(
             TipoIntegracaoModel.id == id)
